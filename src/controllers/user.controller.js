@@ -10,8 +10,11 @@ import mongoose from "mongoose";
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
         const user = await User.findById(userId)
-        const accessToken = user.generateAccessToken()
-        const refreshToken = user.generateRefreshToken()
+        const accessToken = await user.generateAccessToken()
+        const refreshToken = await user.generateRefreshToken()
+        // const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id);
+        // console.log("Access Token:", accessToken);
+        // console.log("Refresh Token:", refreshToken);
 
         user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false })
@@ -134,14 +137,15 @@ const loginUser = asyncHandler(async (req, res) =>{
     }
 
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
-
+   console.log("Access Token:", accessToken);
+   console.log("Refresh Token:", refreshToken);
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = {
         httpOnly: true,
         secure: true
     }
-
+    
     return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -155,10 +159,13 @@ const loginUser = asyncHandler(async (req, res) =>{
             "User logged In Successfully"
         )
     )
+    console.log("Cookies:", req.cookies);
+    console.log("Authorization Header:", req.header("Authorization"));
 
 })
 
 const logoutUser = asyncHandler(async(req, res) => {
+    
     await User.findByIdAndUpdate(
         req.user._id,
         {

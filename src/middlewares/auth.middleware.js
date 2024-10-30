@@ -5,8 +5,13 @@ import { User } from "../models/user.model.js";
 
 export const verifyJWT = asyncHandler(async(req, _, next) => {
     try {
+        // const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+         // Add this line to see what token contains
+
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-        
+        console.log("Token:", token);
+        console.log("Cookies:", req.cookies);
+        console.log("Authorization Header:", req.header("Authorization"));
         // console.log(token);
         if (!token) {
             throw new ApiError(401, "Unauthorized request")
@@ -19,13 +24,13 @@ export const verifyJWT = asyncHandler(async(req, _, next) => {
     
         if (!user) {
             
-            throw new ApiError(401, "Invalid Access Token")
+            throw new ApiError(401,  "Invalid Access Token")
         }
     
         req.user = user;
         next()
     } catch (error) {
-        throw new ApiError(401, error?.message || "Invalid access token")
+        throw new ApiError(401, error?.message || "Invalid access token line 28")
     }
     
 })
