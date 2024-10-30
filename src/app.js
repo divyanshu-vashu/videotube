@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 
 const app = express()
 
+
 // app.use(cors())
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
@@ -24,6 +25,9 @@ import userRouter from "./routes/user.routes.js"
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
-
+app.post("/test", (req, res) => {
+    res.json({ bodyReceived: req.body });
+    console.log(req.body);
+});
 
 export { app }
